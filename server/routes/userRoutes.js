@@ -17,6 +17,8 @@ router.post('/', userController.createUser);
 // Update user
 router.put('/:code', userController.updateUser);
 
+router.post('/bulk-update', userController.updateUser);
+
 // router.put('/:code', userController.updateUser);
 // Delete user
 router.delete('/:code', userController.deleteUser);

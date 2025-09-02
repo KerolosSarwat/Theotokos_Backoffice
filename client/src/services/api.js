@@ -8,6 +8,7 @@ export const USER_API = {
   GET_BY_CODE: (code) => `${API_BASE_URL}/users/${code}`,
   CREATE: `${API_BASE_URL}/users`,
   UPDATE: (code) => `${API_BASE_URL}/users/${code}`,
+  BULK_UPDATE: `${API_BASE_URL}/users/bulk-update`,
   DELETE: (code) => `${API_BASE_URL}/users/${code}`,
   NOTIFICATION: `${API_BASE_URL}/users/send-notification`
 };

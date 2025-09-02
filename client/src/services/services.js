@@ -57,6 +57,7 @@ export const userService = {
     }
   },
 
+
   // Delete user
   deleteUser: async (code) => {
     try {
@@ -77,6 +78,16 @@ export const userService = {
       throw error;
     }
 
+  },
+
+  bulkUpdateUsers: async (usersData) => {
+    try {
+      const response = await axios.post(USER_API.BULK_UPDATE, usersData);
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating users`, error);
+      throw error;
+    }
   }
 };
 
@@ -106,7 +117,7 @@ export const firestoreService = {
     }
   },
 
-    addDocument: async (collection, docId) => {
+  addDocument: async (collection, docId) => {
     try {
       const response = await axios.post(FIRESTORE_API.ADD_DOCUMENT(collection));
       return response.data;
@@ -116,5 +127,5 @@ export const firestoreService = {
     }
   }
 
-  
+
 };

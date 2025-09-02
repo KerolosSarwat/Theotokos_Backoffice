@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { userService } from '../../services/services';
 import { Table, Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx'; // Add this import
 
 const UserList = () => {
   const [users, setUsers] = useState({});
@@ -31,6 +32,30 @@ const UserList = () => {
 
     fetchUsers();
   }, []);
+
+    const exportToExcel = () => {
+    // Prepare data for export
+    const dataForExport = sortedUsers.map(user => ({
+      Code: user.code || '',
+      'Full Name': user.fullName || '',
+      Level: user.level || 'N/A',
+      'Phone Number': user.phoneNumber || 'N/A',
+      Church: user.church || 'N/A'
+    }));
+
+    // Create worksheet
+    const ws = XLSX.utils.json_to_sheet(dataForExport);
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Users");
+
+    // Generate file name with timestamp
+    const fileName = `users_export_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+    // Export to Excel
+    XLSX.writeFile(wb, fileName);
+  };
 
   useEffect(() => {
     if (searchTerm.trim() === '') {
@@ -118,6 +143,13 @@ const UserList = () => {
     <div className="user-list">
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 className="h2">Users</h1>
+        <Button
+            variant="success"
+            onClick={exportToExcel}
+            className="d-flex align-items-center"
+          >
+            <i className="bi bi-file-earmark-excel me-1"></i> Export to Excel
+          </Button>
         <Link to="/users/new" className="btn btn-primary">
           <i className="bi bi-person-plus-fill me-1"></i> Add New User
         </Link>

@@ -1,3 +1,4 @@
+// const { use } = require('react');
 const { db,  admin} = require('../config/firebase-config');
 
 // Get all users
@@ -87,7 +88,48 @@ const updateUser = async (req, res) => {
     const { code } = req.params;
     const userData = req.body;
     
-    // Check if user exists
+    // BULK UPDATE: If userData is an array
+    if (Array.isArray(userData)) {
+      const results = {
+        successful: [],
+        failed: []
+      };
+
+      for (const user of userData) {
+        try {
+          if (!user.code) {
+            results.failed.push({ user, error: 'Missing user code' });
+            continue;
+          }
+          console.log(user.code);
+          const userRef = db.ref(`penddingUsers/${user.code}`);
+          const snapshot = await userRef.once('value');
+          
+          if (!snapshot.exists()) {
+            results.failed.push({ user, error: 'User not found' });
+            continue;
+          }
+          
+          const { code: userCode, ...updateData } = user;
+          await userRef.update(updateData);
+          
+          const updatedSnapshot = await userRef.once('value');
+          results.successful.push({
+            code: user.code,
+            user: updatedSnapshot.val()
+          });
+        } catch (error) {
+          results.failed.push({ user, error: error.message });
+        }
+      }
+
+      return res.status(200).json({
+        message: `Bulk update completed. Successful: ${results.successful.length}, Failed: ${results.failed.length}`,
+        results
+      });
+    }
+    
+    // SINGLE UPDATE: Original logic
     const userRef = db.ref(`users/${code}`);
     const snapshot = await userRef.once('value');
     
@@ -95,10 +137,8 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
     
-    // Update user data
     await userRef.update(userData);
     
-    // Get updated user data
     const updatedSnapshot = await userRef.once('value');
     
     return res.status(200).json({ 
