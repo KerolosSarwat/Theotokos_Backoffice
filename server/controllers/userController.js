@@ -102,8 +102,9 @@ const updateUser = async (req, res) => {
             continue;
           }
           console.log(user.code);
-          const userRef = db.ref(`penddingUsers/${user.code}`);
+          const userRef = db.ref(`users/${user.code}`);
           const snapshot = await userRef.once('value');
+          console.log(user.code);
           
           if (!snapshot.exists()) {
             results.failed.push({ user, error: 'User not found' });

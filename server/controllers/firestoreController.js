@@ -103,7 +103,7 @@ const addDocument = async (req, res) => {
     }
     
     if (collection === 'coptic'){
-     var docRef  = await firestore.collection(collection).doc("Hadana").collection("firstYear").doc(data.id).set(data);
+     var docRef  = await firestore.collection(collection).doc("third_fourthPrimary").collection("firstYear").doc(data.id).set(data);
     }
     else
      docRef = await firestore.collection(collection).add(data);
